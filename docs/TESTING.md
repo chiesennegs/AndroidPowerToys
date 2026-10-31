@@ -3,6 +3,7 @@
 Date: 2026-10-31.
 
 - Exported exactly the reviewed Git index into a clean directory without local.properties, build outputs, device data or signing keys. With JDK 25 and Android SDK Platform 37.0 / Build Tools 36.0.0, unit tests, Android lint and the debug APK build completed successfully from that export. The workflow uses the same SDK/JDK choices and pinned action revisions.
+- The clean export passed **36 app tests and 7 transport tests**. The corrected [hosted build](https://github.com/chiesennegs/AndroidPowerToys/actions/runs/41178053917) also passed. Its first attempt requested an obsolete SDK `tools` package through a setup default; the workflow now uses the runner's current SDK manager directly and installs the exact required platform/build-tools packages.
 - Staged-source scan excluded local configuration, credentials, signing material, device identifiers, private paths, capture files and snapshot/history data. The release retains required source/artwork/library notices. Original application code has an Apache-2.0 license; bundled components retain their terms.
 - The public README covers capabilities, installation, permissions, wireless/manual setup, reviewed edits, state semantics, restore/history, snapshots, privacy, limitations and source builds. Its Windows PowerToys comparison cites Microsoft's official overview and makes no feature-parity or affiliation claim.
 
