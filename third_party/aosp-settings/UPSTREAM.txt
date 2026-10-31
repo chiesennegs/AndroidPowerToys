@@ -1,0 +1,13 @@
+Copyright (C) 2006 The Android Open Source Project. Apache License 2.0.
+Source: https://android.googlesource.com/platform/frameworks/base/+/94b4c163b7dfe5ce3607f7bb8456f9573f7de57d/core/java/android/provider/Settings.java
+Android branch: android17-release
+Settings.java.reference SHA256: 73ff89ec4deb252465b8e8993764301fef96004d141c1d8fde4d6cb4f97a42e2
+The reference source is unmodified. tools/generate_descriptions.py extracts adjacent literal-key Javadoc, removes formatting/metadata, marks deprecated entries and bounds excerpt length. SourceDescriptions.kt is derived documentation, not Android implementation code. Exact-key matches only; edit safety and Pixel defaults are not inferred from documentation.
+
+Additional unmodified consumer references used for authored SystemUI descriptions:
+Clock.java.reference: https://android.googlesource.com/platform/frameworks/base/+/94b4c163b7dfe5ce3607f7bb8456f9573f7de57d/packages/SystemUI/src/com/android/systemui/statusbar/policy/Clock.java
+SHA256 ead1c6bbafdf2377f48f71119b86cc857235d9ad7d8d29e517db51e22f01bde3
+StatusBarIconController.java.reference: https://android.googlesource.com/platform/frameworks/base/+/94b4c163b7dfe5ce3607f7bb8456f9573f7de57d/packages/SystemUI/src/com/android/systemui/statusbar/phone/ui/StatusBarIconController.java
+SHA256 80c7e1b36e272f8f5c32cb0865365c078080058014537c4847c2f1bfd293d515
+TunerServiceImpl.java.reference: https://android.googlesource.com/platform/frameworks/base/+/94b4c163b7dfe5ce3607f7bb8456f9573f7de57d/packages/SystemUI/src/com/android/systemui/tuner/TunerServiceImpl.java
+SHA256 7a1e6c84e278dcfdebc36b04535cef77d7ebf3a33274776dc02457f7d7189212

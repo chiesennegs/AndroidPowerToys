@@ -1,0 +1,10 @@
+# Keep executable wrapper scripts usable on each platform.
+gradlew text eol=lf
+gradlew.bat text eol=crlf whitespace=cr-at-eol
+# Preserve upstream references and legal text without editorial whitespace changes.
+third_party/** -whitespace
+app/src/main/assets/licenses/** -whitespace
+*.png binary
+*.ttf binary
+*.so binary
+*.jar binary

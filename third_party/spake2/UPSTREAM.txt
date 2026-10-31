@@ -1,0 +1,5 @@
+SPAKE2 Android 2.2.1 / spake2-java commit 7615ddd680b990e14513ebb66eac4cb0dbf82464
+Native C submodule 0d15933e5ba3e662cb01245a7ac0dc9fca3eac31
+AAR source: https://jitpack.io/com/github/MuntashirAkon/spake2-java/spake2-android/2.2.1/spake2-android-2.2.1.aar
+AAR SHA256: 8798fb6c04b5d53a6307ed9481e9afe563227abd4e8b9e917c8514fa850071bb
+JNI binaries unmodified; full Java/JNI/C sources included. Use -PrebuildSpake=true to rebuild native code with Android NDK/CMake instead of binaries. Rejected experimental Java implementation is not shipped.

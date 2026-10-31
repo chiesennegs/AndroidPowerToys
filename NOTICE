@@ -1,0 +1,14 @@
+Android PowerToys
+Copyright 2026 MooseAI, LLC
+
+The MooseAI logo (app/src/main/res/drawable-nodpi/mooseai_logo.png) is reused
+unmodified from OpenLifeSpan, Copyright 2026 MooseAI, LLC, under the Apache
+License, Version 2.0. The license is bundled in app/src/main/assets/licenses/.
+
+Additional third-party attributions, modifications and license texts are in
+third_party/README.md and app/src/main/assets/. They are available in the app
+under About → Open-source licenses.
+
+Outfit font: Copyright 2021 The Outfit Project Authors
+(https://github.com/Outfitio/Outfit-Fonts). SIL Open Font License 1.1; see
+app/src/main/assets/licenses/Outfit-OFL.txt. The font is bundled unmodified.

@@ -1,0 +1,1 @@
+<resources><style name="Theme.AndroidPowerToys" parent="android:style/Theme.Material.NoActionBar"><item name="android:windowBackground">#090D16</item><item name="android:colorAccent">#06B6D4</item><item name="android:fontFamily">sans</item><item name="android:windowLightStatusBar">false</item><item name="android:windowSoftInputMode">adjustResize</item></style></resources>

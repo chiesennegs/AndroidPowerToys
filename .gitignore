@@ -1,0 +1,27 @@
+# Local build and IDE state
+.gradle/
+.kotlin/
+**/build/
+**/.cxx/
+.idea/
+*.iml
+.DS_Store
+local.properties
+
+# Distribute binaries through GitHub Releases, not Git history
+dist/
+
+# Local device data, screenshots and credentials
+captures/
+snapshots/
+*.log
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.key
+*.pem
+keystore.properties
+.env
+.env.*
+__pycache__/

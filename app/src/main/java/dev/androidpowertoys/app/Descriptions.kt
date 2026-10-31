@@ -1,0 +1,54 @@
+package dev.androidpowertoys.app
+
+data class Explanation(val text: String, val consequence: String, val source: String, val risk: Risk = Risk.CAUTION, val aospDefault: Cell? = null, val documentationOnly: Boolean = false)
+val platformSource = "https://android.googlesource.com/platform/frameworks/base/+/android17-release/core/java/android/provider/Settings.java"
+val providerSource = "https://android.googlesource.com/platform/frameworks/base/+/android17-release/packages/SettingsProvider/src/com/android/providers/settings/SettingsProvider.java"
+val defaultsSource = "https://android.googlesource.com/platform/frameworks/base/+/android17-release/packages/SettingsProvider/res/values/defaults.xml"
+val initializationSource = "https://android.googlesource.com/platform/frameworks/base/+/android17-release/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java"
+val explanations = buildMap<Pair<Table, String>, Explanation> {
+    putAll(sourceDescriptions())
+    putAll(audioDescriptions())
+    putAll(systemUiDescriptions())
+    fun entry(table: Table, key: String, text: String, effect: String, risk: Risk = Risk.CAUTION, default: String? = null) {
+        put(table to key, Explanation(text,effect,platformSource,risk,default?.let { Cell(true,it) }))
+    }
+    entry(Table.SYSTEM,"screen_off_timeout","Idle time in milliseconds before the display turns off. Device policy can impose a shorter limit.","A short timeout can interrupt reading or confirmation; long timeouts consume power and leave information visible.",Risk.DISPLAY,"60000")
+    entry(Table.SYSTEM,"screen_brightness","Manual display brightness in the documented 0–255 scale. Adaptive brightness and newer device display services can override the visible effect.","Low brightness may make the display unreadable; high brightness increases power use and glare.",Risk.DISPLAY,"102")
+    entry(Table.SYSTEM,"screen_brightness_mode","0 selects manual brightness; 1 selects automatic brightness.","Switching modes may abruptly change visibility. Other brightness values are not automatically changed by this app.",Risk.DISPLAY,"0")
+    entry(Table.SYSTEM,"font_scale","Font-size scaling factor. 1.0 is the unscaled reference; Android's text scaling is not always linear.","Very small or large text can make controls difficult to read or reach and can recreate activities.",Risk.DISPLAY,"1.0")
+    entry(Table.SYSTEM,"accelerometer_rotation","1 allows sensor-based automatic screen rotation; 0 uses the user rotation preference where supported.","The interface may rotate while you interact with it. Individual apps and device policy may ignore the preference.",Risk.DISPLAY,"0")
+    entry(Table.SYSTEM,"user_rotation","User rotation preference: 0, 1, 2, 3 correspond to 0°, 90°, 180°, 270° relative to natural orientation. Rotation lock and device support determine its effect.","An unexpected orientation may make controls difficult to use. Natural orientation is device-dependent.",Risk.DISPLAY,"0")
+    entry(Table.SYSTEM,"sound_effects_enabled","Enables supported user-interface touch sound effects (1 on, 0 off).","Turning this off removes audible interaction feedback; it does not mute all audio.",default="1")
+    entry(Table.SYSTEM,"haptic_feedback_enabled","Legacy preference for supported haptic feedback (1 on, 0 off). Newer haptic settings and apps may override it.","Disabling haptics can remove useful tactile feedback; enabling it can increase vibration.",default="1")
+    entry(Table.SYSTEM,"dtmf_tone","Controls dial-pad touch tones where the dialer honors this setting (1 on, 0 off).","Changes audible dial-pad feedback; the dialer may manage its own preference.",default="1")
+    entry(Table.SYSTEM,"vibrate_when_ringing","Legacy preference for vibration during ringing (1 on, 0 off). Modern vibration controls may supersede it.","Changing vibration can make calls easier to miss.",default="0")
+    entry(Table.SYSTEM,"time_12_24","Preferred clock format: 12 or 24. An absent value can allow locale-based behavior.","Changes time formatting in apps that follow this preference; it does not change the actual time.")
+    entry(Table.SYSTEM,"ringtone","URI of the default ringtone sound. Sound selection may also involve cached audio and per-contact choices.","An invalid URI can remove or break audible incoming-call alerts. Prefer Android's sound picker.",Risk.HIGH)
+    entry(Table.SYSTEM,"notification_sound","URI of the default notification sound. Notification channels can override it.","An invalid URI may silence some alerts; changing this does not update every channel.",Risk.HIGH)
+    entry(Table.SYSTEM,"alarm_alert","URI of the default alarm sound; individual alarms can override it.","An invalid sound can cause missed audible alarms. Prefer the system sound picker.",Risk.HIGH)
+    listOf("volume_ring" to "ringing", "volume_notification" to "notifications", "volume_alarm" to "alarms", "volume_music" to "media", "volume_voice" to "voice calls").forEach { (key, stream) -> entry(Table.SYSTEM,key,"Stored volume index for $stream. Valid ranges and persistence are device/audio-service specific.","Low or invalid values may silence $stream. Direct writes may be ignored or replaced by the audio service; prefer Android volume controls.",Risk.HIGH) }
+    entry(Table.SYSTEM,"system_locales","System locale list. Modern Android manages language selection through dedicated locale APIs and settings.","Changing languages can make recovery instructions hard to read. Use Android's Languages screen.",Risk.BLOCKED)
+    entry(Table.SECURE,"browser_content_filters_enabled","Positive values request blocking explicit websites; zero or negative values allow all sites. This signal is not proof of account supervision.","Changing this may remove browser explicit-site filtering. Enabled flags alone do not establish account supervision.",Risk.HIGH)
+    entry(Table.SECURE,"search_content_filters_enabled","Positive values request filtering in web search engines; zero or negative values turn the signal off. Browsers may use it to enforce SafeSearch.","Changing this can remove forced SafeSearch and expose explicit results. Screen visibility confirmation cannot validate these privacy effects.",Risk.HIGH)
+    entry(Table.SECURE,"android_id","On Android 8+, the identifier returned to an app is scoped to signing key, Android user, and device; a raw table row is not a universal device ID.","This platform-controlled identifier may be ignored or rejected if edited. Apps may continue receiving their own scoped identifiers.",Risk.HIGH)
+    entry(Table.SECURE,"default_input_method","Component identifier for the selected input method (keyboard).","A missing or invalid keyboard can prevent text entry. Use Android's keyboard settings.",Risk.BLOCKED)
+    entry(Table.SECURE,"enabled_input_methods","List of enabled input methods with subtype metadata.","An invalid list can disable usable keyboards and complicate recovery. Use Android's keyboard settings.",Risk.BLOCKED)
+    entry(Table.SECURE,"accessibility_enabled","Indicates enabled accessibility-service support; service configuration is managed separately.","Changing this may disable assistance required to operate the device. Use Android Accessibility settings.",Risk.BLOCKED)
+    entry(Table.SECURE,"enabled_accessibility_services","List of accessibility-service components enabled for this user.","Removing a service may disable screen reading or other essential input assistance.",Risk.BLOCKED)
+    entry(Table.SECURE,"display_density_forced","Forced logical display density, where supported; normally managed by display services.","A bad density can make navigation unusable or require external recovery; an in-app countdown is insufficient.",Risk.BLOCKED)
+    entry(Table.GLOBAL,"display_size_forced","Forced display size, where supported; this is not a universal physical-resolution API.","A bad size can make navigation unusable or require external recovery. Use Android's supported display controls.",Risk.BLOCKED)
+    entry(Table.GLOBAL,"adb_enabled","Debugging-service state. Android may expose a redacted value to ordinary apps.","Disabling debugging can remove your external recovery connection. Use Developer options.",Risk.BLOCKED)
+    entry(Table.GLOBAL,"development_settings_enabled","Developer-options enabled state. Individual development features have separate controls.","Changing this can affect debugging and recovery access. Use Developer options.",Risk.BLOCKED)
+    entry(Table.GLOBAL,"airplane_mode_on","Airplane-mode state (1 on, 0 off). Radios and system broadcasts are managed by services, so a raw table write is not a complete airplane-mode operation.","Can interrupt calls, data and wireless debugging; services may reject or ignore direct writes. Prefer Quick Settings.",Risk.HIGH,"0")
+    entry(Table.GLOBAL,"auto_time","1 enables automatic clock-time detection; 0 disables it. Time sources depend on the device.","Incorrect clock time can break logins, certificates and scheduled events. This does not set a manual time.",Risk.HIGH,"1")
+    entry(Table.GLOBAL,"auto_time_zone","1 enables automatic time-zone detection; 0 disables it.","Incorrect time zones can shift displayed appointment and alarm times.",Risk.HIGH,"1")
+    entry(Table.GLOBAL,"stay_on_while_plugged_in","Bitmask of power-source types that keep the screen awake while charging; 0 disables this behavior.","Keeping the display awake uses power, exposes visible information and may increase burn-in risk.",default="0")
+    entry(Table.GLOBAL,"window_animation_scale","Duration scale for window animations. 0 disables these animations; 1 is normal speed.","Changes visual motion and timing across apps; unusual values can make interactions feel stalled.",default="1.0")
+    entry(Table.GLOBAL,"transition_animation_scale","Duration scale for activity-transition animations; 0 disables them and 1 is normal speed.","Changes visual motion and transition timing; apps may not all follow this preference.",default="1.0")
+    entry(Table.GLOBAL,"animator_duration_scale","Duration scale for Animator-based animations; 0 ends them immediately and 1 is normal speed.","Changes animation timing and can affect app interactions. The framework normal-speed reference is 1; no factory table default is asserted here.")
+}
+fun riskExplanation(table: Table, name: String): String = when(riskFor(table,name)) {
+    Risk.BLOCKED -> explanations[table to name]?.consequence ?: "This setting may affect input, system setup, or debugging recovery. Edit it through Android's dedicated Settings screen."
+    Risk.UNKNOWN -> explanations[table to name]?.consequence ?: "Description unavailable. Effects are unassessed and may include loss of connectivity, privacy protections, input, or system stability. No automatic rollback is provided for this unknown key."
+    else -> explanations[table to name]?.consequence.orEmpty()
+}
